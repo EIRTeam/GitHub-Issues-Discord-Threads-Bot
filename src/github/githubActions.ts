@@ -220,7 +220,9 @@ export async function getIssues() {
   });
   fillCommentsData();
 
-  return formatIssuesToThreads(result.data as GitIssue[]);
+
+  const issues = (result.data as GitIssue[]).filter((a: GitIssue) => a.pull_request == undefined && a.body);
+  return formatIssuesToThreads(issues);
 }
 
 function fillCommentsData() {

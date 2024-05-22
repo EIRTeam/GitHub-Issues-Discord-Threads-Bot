@@ -26,6 +26,7 @@ interface GitIssue {
   number: number;
   node_id: string;
   locked: boolean;
+  pull_request: Object | undefined;
   state: "open" | "closed";
 }
 
