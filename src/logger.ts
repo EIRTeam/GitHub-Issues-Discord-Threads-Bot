@@ -34,6 +34,9 @@ export const Actions = {
   Locked: "locked",
   Unlocked: "unlocked",
   Deleted: "deleted",
+  UpdatedTags :"updated tags",
+  DeletedTag :"deleted tag",
+  AddedTag :"added tag",
   DeletedComment: "deleted comment",
 } as const;
 

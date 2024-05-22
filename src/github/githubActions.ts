@@ -135,6 +135,19 @@ export function unlockIssue(thread: Thread) {
   });
 }
 
+export function updateIssueLabels(thread: Thread) {
+  const labels = thread.appliedTags?.map(
+    (id) => store.availableTags.find((item) => item.id === id)?.name || "",
+  );
+  octokit.rest.issues.update({
+    ...repoCredentials,
+    issue_number: thread.number!,
+    labels
+  }).then((res) => {
+    info(Actions.UpdatedTags, thread);
+  })
+}
+
 export function createIssue(thread: Thread, params: Message) {
   const { title, appliedTags, number } = thread;
   if (number) return;
@@ -157,7 +170,7 @@ export function createIssue(thread: Thread, params: Message) {
       thread.number = res.data.number;
 
       info(Actions.Created, thread);
-    });
+    })
 }
 
 export function createIssueComment(thread: Thread, params: Message) {

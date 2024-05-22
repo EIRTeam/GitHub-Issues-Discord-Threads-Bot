@@ -1,16 +1,20 @@
 import { Request } from "express";
 import {
+  addThreadTag,
   archiveThread,
   createComment,
   createThread,
   deleteThread,
+  getThreadChannel,
   lockThread,
+  removeThreadTag,
   unarchiveThread,
   unlockThread,
 } from "../discord/discordActions";
 import { GitHubLabel } from "../interfaces";
 import { store } from "../store";
 import { getDiscordInfoFromGithubBody } from "./githubActions";
+import { config } from "../config";
 
 async function getIssueNodeId(req: Request): Promise<string | undefined> {
   return req.body.issue.node_id;
@@ -19,7 +23,14 @@ async function getIssueNodeId(req: Request): Promise<string | undefined> {
 export async function handleOpened(req: Request) {
   if (!req.body.issue) return;
   const { node_id, number, title, user, body, labels } = req.body.issue;
-  if (store.threads.some((thread) => thread.node_id === node_id)) return;
+  if (store.threads.some((thread) => thread.node_id === node_id)) {
+    const { thread, channel } = await getThreadChannel(node_id);
+    const name = channel?.name;
+    channel?.setName(`#${number}: ${name}`);
+    
+    channel?.send(`GitHub Issue: <${req.body.issue.html_url}>\nThank you for your report!`);
+    return;
+  }
 
   const { login } = user;
   const appliedTags = (<GitHubLabel[]>labels)
@@ -33,6 +44,7 @@ export async function handleOpened(req: Request) {
 }
 
 export async function handleCreated(req: Request) {
+  if (!req.body.comment) return;
   const { user, id, body } = req.body.comment;
   const { login, avatar_url } = user;
   const { node_id } = req.body.issue;
@@ -75,4 +87,16 @@ export async function handleUnlocked(req: Request) {
 export async function handleDeleted(req: Request) {
   const node_id = await getIssueNodeId(req);
   deleteThread(node_id);
+}
+
+export async function handleLabeled(req: Request) {
+  const tag = store.availableTags.find((tag) => tag.name === req.body.label.name)?.id;
+  const node_id = await getIssueNodeId(req);
+  addThreadTag(node_id, tag);
+}
+
+export async function handleUnlabeled(req: Request) {
+  const tag = store.availableTags.find((tag) => tag.name === req.body.label.name)?.id;
+  const node_id = await getIssueNodeId(req);
+  removeThreadTag(node_id, tag);
 }

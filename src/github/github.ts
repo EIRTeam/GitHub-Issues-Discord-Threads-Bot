@@ -4,9 +4,11 @@ import {
   handleClosed,
   handleCreated,
   handleDeleted,
+  handleLabeled,
   handleLocked,
   handleOpened,
   handleReopened,
+  handleUnlabeled,
   handleUnlocked,
 } from "./githubHandlers";
 
@@ -28,6 +30,8 @@ export function initGithub() {
     locked: (req) => handleLocked(req),
     unlocked: (req) => handleUnlocked(req),
     deleted: (req) => handleDeleted(req),
+    labeled: (req) => handleLabeled(req),
+    unlabeled: (req) => handleUnlabeled(req)
   };
 
   app.post("/", async (req, res) => {

@@ -176,3 +176,42 @@ export async function getThreadChannel(node_id: string | undefined): Promise<{
 
   return { thread, channel };
 }
+
+export async function addThreadTag(node_id: string | undefined, tag: string | undefined) {
+  if (!tag) {
+    return;
+  }
+  const {thread, channel } = await getThreadChannel(node_id);
+  if (!channel || !thread) {
+    return;
+  }
+  thread!.appliedTags = [...channel!.appliedTags];
+  const idx = thread?.appliedTags.indexOf(tag!);
+  if (idx != -1) {
+    return
+  }
+  thread.lockTagging = true;
+  thread?.appliedTags.push(tag!);
+  channel?.setAppliedTags(thread!.appliedTags).then(() => {
+    thread.lockTagging = false;
+  });
+  info(Actions.AddedTag, thread);
+}
+
+export async function removeThreadTag(node_id: string | undefined, tag: string | undefined) {
+  if (!tag) {
+    return;
+  }
+  const {thread, channel } = await getThreadChannel(node_id);
+  if (!channel || !thread) {
+    return;
+  }
+  const threadTags = [...channel!.appliedTags];
+  const idx = threadTags.indexOf(tag!);
+  if (idx != -1) {
+    thread.lockTagging = true;
+    threadTags.splice(idx, 1);
+    channel?.setAppliedTags(threadTags);
+    info(Actions.DeletedTag, thread);
+  }
+}
