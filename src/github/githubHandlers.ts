@@ -26,7 +26,10 @@ export async function handleOpened(req: Request) {
   if (store.threads.some((thread) => thread.node_id === node_id)) {
     const { thread, channel } = await getThreadChannel(node_id);
     const name = channel?.name;
-    channel?.setName(`#${number}: ${name}`);
+    const new_name = `#${number}: ${name}`;
+    if (new_name.length <= 100) {
+      channel?.setName(new_name);
+    }
     
     channel?.send(`GitHub Issue: <${req.body.issue.html_url}>\nThank you for your report!`);
     return;
