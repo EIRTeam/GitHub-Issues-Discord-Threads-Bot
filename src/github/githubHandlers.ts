@@ -68,26 +68,31 @@ export async function handleCreated(req: Request) {
 }
 
 export async function handleClosed(req: Request) {
+  return
   const node_id = await getIssueNodeId(req);
   archiveThread(node_id);
 }
 
 export async function handleReopened(req: Request) {
+  return
   const node_id = await getIssueNodeId(req);
   unarchiveThread(node_id);
 }
 
 export async function handleLocked(req: Request) {
+  return
   const node_id = await getIssueNodeId(req);
   lockThread(node_id);
 }
 
 export async function handleUnlocked(req: Request) {
+  return
   const node_id = await getIssueNodeId(req);
   unlockThread(node_id);
 }
 
 export async function handleDeleted(req: Request) {
+  return
   const node_id = await getIssueNodeId(req);
   deleteThread(node_id);
 }

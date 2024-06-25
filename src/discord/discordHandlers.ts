@@ -102,14 +102,14 @@ export async function handleThreadUpdate(params: AnyThreadChannel) {
     updateIssueLabels(thread);
   }
 
-  if (thread.locked !== locked && !thread.lockLocking) {
+  /*if (thread.locked !== locked && !thread.lockLocking) {
     if (thread.archived) {
       thread.lockArchiving = true;
     }
     thread.locked = locked;
     locked ? lockIssue(thread) : unlockIssue(thread);
-  }
-  if (thread.archived !== archived) {
+  }*/
+  /*if (thread.archived !== archived) {
     setTimeout(() => {
       // timeout for fixing discord archived post locking
       if (thread.lockArchiving) {
@@ -122,7 +122,7 @@ export async function handleThreadUpdate(params: AnyThreadChannel) {
       thread.archived = archived;
       archived ? closeIssue(thread) : openIssue(thread);
     }, 500);
-  }
+  }*/
 }
 
 export async function handleMessageCreate(params: Message) {
